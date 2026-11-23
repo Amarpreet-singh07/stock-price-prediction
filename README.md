@@ -1,34 +1,36 @@
 # Stock Market Prediction using LSTM
    
 
-The project revolves around the capability of LSTM to make predictions. The model tries to predict the next 30 days' closing price of the Stock Market.
-The main aim of this project is to increase the accuracy of the prediction model by tweaking several **hyper-parameters**. The number of **LSTM** layers used would be fixed (50 units) but the parameters that are being changed are:- **BATCH_SIZE** and, **EPOCHS**.   
+The project revolves around the capability of LSTM to make predictions. The model learns to predict the next day's closing price from the previous 100 days, and is then rolled forward recursively to produce a 30-day forecast.
+The main aim of this project is to increase the accuracy of the prediction model by tweaking several **hyper-parameters**. The architecture is fixed (3 stacked **LSTM** layers of 50 units) and the parameters that are varied are **BATCH_SIZE** (16/32/64) and **EPOCHS** (25/50/100).   
 ___
 # Table of Contents
-- [Abstract](https://github.com/mohit16in/Stock-Price-Prediction#abstract)
-- [Background Information](https://github.com/mohit16in/Stock-Price-Prediction#background-information)
-   - [What is Machine Learning?](https://github.com/mohit16in/Stock-Price-Prediction#what-is-machine-learning)
-   - [How is it Different from Deep Learning?](https://github.com/mohit16in/Stock-Price-Prediction#how-is-it-different-from-deep-learning)
-   - [AI vs ML vs DL](https://github.com/mohit16in/Stock-Price-Prediction#artificial-intelligence-vs-machine-learning-vs-deep-learning)
-   - [Neural Networks](https://github.com/mohit16in/Stock-Price-Prediction#neural-networks)
-   - [Simplest Neural Network](https://github.com/mohit16in/Stock-Price-Prediction#simplest-neural-network)
-   - [Deep Neural Network](https://github.com/mohit16in/Stock-Price-Prediction#deep-neural-network)
-   - [Recurrent Neural Network](https://github.com/mohit16in/Stock-Price-Prediction#recurrent-nueral-network)
-   - [Long Short Term Memory](https://github.com/mohit16in/Stock-Price-Prediction#long-short-term-memory)
-- [Project Disposition](https://github.com/mohit16in/Stock-Price-Prediction#project-disposition)
-   - [Description](https://github.com/mohit16in/Stock-Price-Prediction#description)
-   - [Plan Of Attack](https://github.com/mohit16in/Stock-Price-Prediction#plan-of-attack)
-   - [Data Acquisition](https://github.com/mohit16in/Stock-Price-Prediction#data-acquisition)
-   - [Data Preprocessing](https://github.com/mohit16in/Stock-Price-Prediction#data-preprocessing)
-      - [Data Cleaning](https://github.com/mohit16in/Stock-Price-Prediction#1-data-cleaning)
-      - [Data Extraction](https://github.com/mohit16in/Stock-Price-Prediction#2-data-extraction)
-      - [Feature Scaling](https://github.com/mohit16in/Stock-Price-Prediction#3-feature-scaling)
-   - [Structuring Data](https://github.com/mohit16in/Stock-Price-Prediction#structuring-data)
-   - [Creating the model](https://github.com/mohit16in/Stock-Price-Prediction#creating-the-model)
-   - [Training the model](https://github.com/mohit16in/Stock-Price-Prediction#training-the-model)
-   - [Prediction](https://github.com/mohit16in/Stock-Price-Prediction#prediction)
-   - [Plotting the Chart](https://github.com/mohit16in/Stock-Price-Prediction#plotting-the-chart)
-- [Tweaking the Hyper-parameters](https://github.com/mohit16in/Stock-Price-Prediction#tweaking-the-hyper-parameters)
+- [Abstract](#abstract)
+- [Background Information](#background-information)
+   - [What is Machine Learning?](#what-is-machine-learning)
+   - [How is it Different from Deep Learning?](#how-is-it-different-from-deep-learning)
+   - [AI vs ML vs DL](#artificial-intelligence-vs-machine-learning-vs-deep-learning)
+   - [Neural Networks](#neural-networks)
+   - [Simplest Neural Network](#simplest-neural-network)
+   - [Deep Neural Network](#deep-neural-network)
+   - [Recurrent Neural Network](#recurrent-nueral-network)
+   - [Long Short Term Memory](#long-short-term-memory)
+- [Project Disposition](#project-disposition)
+   - [Description](#description)
+   - [Plan Of Attack](#plan-of-attack)
+   - [Data Acquisition](#data-acquisition)
+   - [Data Preprocessing](#data-preprocessing)
+      - [Data Cleaning](#1-data-cleaning)
+      - [Data Extraction](#2-data-extraction)
+      - [Feature Scaling](#3-feature-scaling)
+   - [Structuring Data](#structuring-data)
+   - [Creating the model](#creating-the-model)
+   - [Training the model](#training-the-model)
+   - [Prediction](#prediction)
+   - [Plotting the Chart](#plotting-the-chart)
+- [Tweaking the Hyper-parameters](#tweaking-the-hyper-parameters)
+- [Results](#results)
+- [Running the project](#running-the-project)
 
 ## Abstract    
 **LSTM** or **Long Short-Term Memory** is an improvement over traditional **RNN** or **Recurrent Neural Network** in the sense that it can effectively “remember” **long sequence of events in the past**. Just like humans can derive information from the previous context and can chart his future actions, **RNN** and **LSTM** tends to imitate the same. The difference between **RNN** and **LSTM** is that **RNN** is used in places where the **retention of memory is short**, whereas **LSTM** is capable of connecting events that happened way earlier and the events that followed them.   
@@ -98,7 +100,7 @@ ___
 ![data collection tsla](https://github.com/mohit16in/Stock-Price-Prediction/assets/75472403/5a8337d4-ed39-4c55-8699-13c07eb8d9e0)
 
 - [Yahoo finance](https://finance.yahoo.com/) maintains past data of hundreds of Stock Markets. One can easily download the data in the form of CSV files and use it for training.
-- Past 4 years data is downloaded for TSLA stock.
+- About 2 years of daily data (504 rows, Nov 2020 - Nov 2022) is bundled in `tsla.csv`. Refresh or change the ticker with `python download_data.py --ticker TSLA --years 4`.
   
 ![data head](https://github.com/mohit16in/Stock-Price-Prediction/assets/75472403/911d2256-cf2d-4440-baca-a84f8a2b725f)
 
@@ -116,7 +118,7 @@ Now the extracted data is stored in a 2D array for further processing.
 ![close ](https://github.com/mohit16in/Stock-Price-Prediction/assets/75472403/72517ce5-e34b-484b-b120-bfb82842a651)
 
 ### 3. Feature Scaling
-Feature scaling is the most important part of Data preprocessing. It helps in standardizing/normalizing the given dataset so that one entity is not given more importance than the other solely based on its quantity. Consider this as bringing all the scattered data within the same level for easier analysis. I have used MinMaxScaler() to scale all the values between 0 and 1.   
+Feature scaling is the most important part of Data preprocessing. It helps in standardizing/normalizing the given dataset so that one entity is not given more importance than the other solely based on its quantity. Consider this as bringing all the scattered data within the same level for easier analysis. I have used MinMaxScaler() to scale values between 0 and 1. The scaler is fitted **on the training split only** (the split is chronological, 70/30) so that no test information leaks into training.   
 
    
 ## Structuring Data
@@ -125,7 +127,7 @@ Feature scaling is the most important part of Data preprocessing. It helps in st
 - y_train is the output for the training set   
 A similar data structure is created for preparing the prediction dataset.
 
-Structuring the data for training purposes. The model will use the previous 30 days as the deciding factor and will predict the closing price for the next 30 days.
+Structuring the data for training purposes. Each sample is a window of the previous **100** closing prices (`TIME_STEP = 100`) and the target is the next day's close. The 30-day forecast is produced by feeding each prediction back in as input (recursive forecasting), so errors compound with the horizon.
 
 ## Creating the model
 ![model](https://github.com/mohit16in/Stock-Price-Prediction/assets/75472403/c424fdc5-39b3-4940-9aee-ed386324ded6)
@@ -138,7 +140,7 @@ This is the stage where we play with the hyper-parameters to bring about changes
    
 
 ## Prediction
-The model has been trained. Now it's time to predict the next day's price. For this purpose, a test dataset is created which contains past days' closing prices. This dataset is structured the same way as done in the Data Structuring step. Then these values are fed one by one to the LSTM input layer and the output is collected and stored in a 2D array for chart plotting and accuracy analysis.   
+The model has been trained. Now it's time to predict the next day's price. For this purpose, a test dataset is created which contains past days' closing prices. This dataset is structured the same way as done in the Data Structuring step. The last 100 training days are prepended to the test set as context, then windows are fed to the LSTM input layer and the output is collected and stored in a 2D array for chart plotting and accuracy analysis.   
    
 
 ## Plotting the Chart
@@ -152,3 +154,37 @@ Tweaking hyperparameters brings about a change in how the model learns and analy
 ![hyperparameters](https://github.com/mohit16in/Stock-Price-Prediction/assets/75472403/8fea8cf8-bcd8-4879-9600-f3d44a194773)
 
 ![error](https://github.com/mohit16in/Stock-Price-Prediction/assets/75472403/70d09b76-986a-4fb9-a855-4ea59f2598f8)
+
+# Results
+Numbers from the notebook (seed 42, TSLA, chronological 70/30 split). The baseline is the naive rule *"tomorrow's close = today's close"*.
+
+| Model | Train RMSE ($) | Test RMSE ($) | Test MAPE |
+|---|---|---|---|
+| LSTM (batch 64, early stopping) | 30.6 | 31.4 | 9.8 % |
+| Naive baseline | 10.3 | 10.6 | 3.0 % |
+
+Hyper-parameter sweep (ranked by validation RMSE, no early stopping):
+
+| Batch size | Epochs | Val RMSE | Test RMSE |
+|---|---|---|---|
+| 16 | 50 | 18.7 | 16.8 |
+| 32 | 50 | 22.6 | 20.9 |
+| 16 | 100 | 23.7 | 20.1 |
+| 16 | 25 | 25.1 | 20.0 |
+| 64 | 50 | 26.1 | 24.0 |
+| 32 | 25 | 27.4 | 23.3 |
+| 32 | 100 | 28.7 | 26.7 |
+| 64 | 100 | 29.4 | 33.4 |
+| 64 | 25 | 30.7 | 30.0 |
+
+**Takeaways**
+- Smaller batches with a moderate number of epochs (16 / 50) worked best; more epochs overfit.
+- **No LSTM configuration beats the naive baseline.** Daily closing prices are close to a random walk, so a model trained on past closes alone mostly learns "stay near yesterday's price". Treat the 30-day forecast as an illustration of the technique, not as a trading signal.
+- Results vary between runs and with the data window; re-run the notebook to reproduce.
+
+# Running the project
+```bash
+pip install -r requirements.txt
+python download_data.py --ticker TSLA --years 4   # optional: refresh tsla.csv
+jupyter notebook Stock_Price_Prediction.ipynb
+```
