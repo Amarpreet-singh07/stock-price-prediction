@@ -31,6 +31,7 @@ ___
 - [Tweaking the Hyper-parameters](#tweaking-the-hyper-parameters)
 - [Results](#results)
 - [Running the project](#running-the-project)
+- [Web frontend](#web-frontend)
 
 ## Abstract    
 **LSTM** or **Long Short-Term Memory** is an improvement over traditional **RNN** or **Recurrent Neural Network** in the sense that it can effectively “remember” **long sequence of events in the past**. Just like humans can derive information from the previous context and can chart his future actions, **RNN** and **LSTM** tends to imitate the same. The difference between **RNN** and **LSTM** is that **RNN** is used in places where the **retention of memory is short**, whereas **LSTM** is capable of connecting events that happened way earlier and the events that followed them.   
@@ -188,3 +189,16 @@ pip install -r requirements.txt
 python download_data.py --ticker TSLA --years 4   # optional: refresh tsla.csv
 jupyter notebook Stock_Price_Prediction.ipynb
 ```
+
+# Web frontend
+A small React + TypeScript app (Vite, Recharts) in `frontend/` visualizes the model output: actual vs predicted close with the 30-day forecast, and the batch-size / epochs sweep as a heatmap.
+
+It reads a static `frontend/public/data.json`, which the last cell of the notebook writes. No backend is needed.
+
+```bash
+cd frontend
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # static site in frontend/dist (works from any sub-path)
+```
+To update the charts, re-run the notebook (or `python download_data.py` first for fresh data) so `data.json` is regenerated.

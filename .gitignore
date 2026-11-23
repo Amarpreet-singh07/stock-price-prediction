@@ -7,3 +7,5 @@ venv/
 .DS_Store
 *.keras
 *.h5
+node_modules/
+dist/
